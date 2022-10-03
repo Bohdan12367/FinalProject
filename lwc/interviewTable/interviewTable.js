@@ -45,7 +45,6 @@ export default class InterviewTable extends LightningElement {
     }
 
     handleRowAction(event){
-        // console.log(JSON.stringify(event.detail.row.Id))
         console.log(event.detail.row.Id)
         //const actionName = event.detail;
         //const row = event.detail.row.Id;
