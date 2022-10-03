@@ -1,0 +1,11 @@
+<template>
+        <div class="slds-p-left_medium">
+            <lightning-card title="Offer Job">
+                <p class="slds-p-horizontal_small">Congratulations! You have successfully passed the interview and received job offer. Are you ready to accept it?</p>
+                <lightning-button-group>
+                    <lightning-button label="Offer Refused" variant="destructive" onclick={stageUnSuccess} class="slds-m-left_x-small"></lightning-button>
+                    <lightning-button label="Offer Signed" variant="success" onclick={stageSuccess} class="slds-m-left_x-small"></lightning-button>
+                </lightning-button-group>
+            </lightning-card>
+        </div>
+</template>

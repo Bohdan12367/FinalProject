@@ -1,0 +1,15 @@
+<template>
+    <lightning-card>
+        <div>
+            <lightning-datatable
+                    key-field="Id"
+                    data={data}
+                    show-row-number-column
+                    onrowaction={handleRowAction}
+                    hide-checkbox-column
+                    columns={columns}>
+            </lightning-datatable>
+        </div>
+    </lightning-card>
+</template>
+
