@@ -13,7 +13,6 @@ public class InterviewServiceTest {
         insert objInterview;
         insert objInterview1;
         insert objInterview2;
-
         Test.stopTest();
         List<Interview__c> interviews = [SELECT Interviewer__c FROM Interview__c];
         System.equals(3, interviews.size());
