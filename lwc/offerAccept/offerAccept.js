@@ -4,6 +4,7 @@ import updateStageSuccess from '@salesforce/apex/OfferAcceptController.updateSta
 import updateStageUnSuccess from '@salesforce/apex/OfferAcceptController.updateStageUnSuccess';
 import getInterviews from '@salesforce/apex/OfferAcceptController.getInterviews';
 import {refreshApex} from "@salesforce/apex";
+import { updateRecord } from 'lightning/uiRecordApi';
 
 export default class OfferAccept extends LightningElement {
     @api recordId;
@@ -13,12 +14,14 @@ export default class OfferAccept extends LightningElement {
 
     stageSuccess(){
         updateStageSuccess({InterviewId: this.recordId})
-            .then(result => window.location.reload)
+            .then(() => {
+                updateRecord({ fields: { Id: this.recordId } });
+            })
             .catch(error => console.log(error))
     }
     stageUnSuccess(){
         updateStageUnSuccess({InterviewId: this.recordId})
-            .then(result => window.location.reload)
+            .then(result => updateRecord({ fields: { Id: this.recordId } }))
             .catch(error => console.log(error))
     }
 }

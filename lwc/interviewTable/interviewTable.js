@@ -1,61 +1,87 @@
-import {api, LightningElement, wire} from 'lwc';
-import getInterviews from '@salesforce/apex/InterviewTableController.getInterviews';
-import {NavigationMixin} from "lightning/navigation";
+import {api, LightningElement} from 'lwc';
+import getInterviewsPerWeek from '@salesforce/apex/InterviewTableController.getInterviewsPerWeek';
+import getInterviewsCount from '@salesforce/apex/InterviewTableController.getInterviewsCount';
+import getAllInterviews from '@salesforce/apex/InterviewTableController.getAllInterviews';
 
-// const actions = [
-//     {label : 'View', name:'view'},
-// ];
+const actions = [
+    { label: 'View', checked: 'true', name: 'view' },
+];
 
 const columns = [
-    // {label: 'Id',fieldName: 'Id'},
-    { label: 'Name Interview', fieldName: 'Name'},
-    //     type: "url",
-    //     typeAttributes: { label: { fieldName: "Interview" }, tooltip:"Interview", target: "_blank"}
-    // },
-    { label: 'Status Interview', fieldName: 'Stage__c'},
-    // {
-    //     type:'action',
-    //     typeAttributes : {rowActions: actions},
-    // },
+    { label: 'Name Interview', fieldName: 'Name' },
+    { label: 'Status Interview', fieldName: 'Stage__c' },
+    { label: 'Status Interviewkfrlfjrl', fieldName: 'Scheduled_interview_date__c' },
+    {
+        type: 'action',
+        typeAttributes: {rowActions: actions, menuAlignment: 'left'},
+    },
 ];
 export default class InterviewTable extends LightningElement {
     @api recordId;
-
-    data = [];
+    dataCount = [];
+    dataAll = [];
+    dataPerWeek = [];
+    dataOffer;
+    dataReject;
     columns = columns;
     error;
-    record = {};
+    visibleInterviews;
+    percentOffer;
+    percentReject;
+    rejectedCount = 0;
+    count = 0;
+
+    updateInterviewsHandler(event) {
+        this.visibleInterviews = [...event.detail.records]
+    }
 
     connectedCallback() {
-        console.log(this.recordId);
-        getInterviews({CandidateId: this.recordId})
-            .then(result =>{
-                this.data = result;
-                // let temp = [];
-                // for(let x=0;x<result.length;x++){
-                //     let tempRecord = Object.assign({}, result[x]); //cloning object
-                //     tempRecord.LinkUrl = "/" + tempRecord.Id;
-                //     temp.push(tempRecord);
-                // }
-                // this.data = temp;
+        getInterviewsPerWeek({CandidateId: this.recordId})
+            .then(result => {
+                this.dataPerWeek = result;
             })
-            .catch(error =>{
+            .catch(error => {
+                this.error = error;
+            })
+        getInterviewsCount({CandidateId: this.recordId})
+            .then(result => {
+                this.dataCount = result;
+            })
+            .catch(error => {
+                this.error = error;
+            })
+        getAllInterviews({CandidateId: this.recordId})
+            .then(result => {
+                this.dataAll = result;
+                this.handleInterviewStage();
+            })
+            .catch(error => {
                 this.error = error;
             })
     }
 
+    //TODO: забрати консольлоги
+    //TODO: позабиртаи пробели
+    //TODO: забрати коменти
+    //TODO: offeracept видалити нахер
+    handleInterviewStage(){
+        console.log(this.dataAll);
+        for(let item of this.dataAll){
+            console.log(item.Stage__c);
+            if(item.Stage__c === 'Offer Sent' || item.Stage__c === 'Offer Signed' || item.Stage__c === 'Refused'){
+                console.log(item.Stage__c);
+                this.count++;
+            }else if(item.Stage__c === 'Rejected by interviewer'){
+                this.rejectedCount++;
+            }
+        }
+        this.percentOffer = this.count/this.dataCount * 100;
+        this.percentReject = this.rejectedCount/this.dataCount * 100;
+    }
+
     handleRowAction(event){
-        console.log(event.detail.row.Id)
-        //const actionName = event.detail;
-        //const row = event.detail.row.Id;
-            this[NavigationMixin.Navigate]({
-                type: 'standard__recordPage',
-                attributes: {
-                    recordId: event.detail.row.Id,
-                    //objectApiName : 'Interview__c',
-                    actionName: 'view'
-                }
-            });
+        const row = event.detail.row.Id;
+         window.open('/'+row);
 
         }
 

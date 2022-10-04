@@ -1,15 +1,89 @@
 <template>
     <lightning-card>
+        <article class="slds-card">
+            <div class="slds-grid slds-einstein-header slds-card__header">
+                <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-grid slds-grid_vertical-align-center slds-size_3-of-4 slds-medium-size_2-of-3">
+                        <div class="slds-media__figure">
+          <span class="slds-icon_container slds-icon-utility-salesforce1">
+            <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+              <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#salesforce1"></use>
+            </svg>
+          </span>
+                        </div>
+                        <div class="slds-media__body">
+                            <h2 class="slds-truncate">
+                                <span class="slds-text-heading_small">This week's interview</span>
+                            </h2>
+                        </div>
+                    </div>
+                    <div class="slds-einstein-header__figure slds-size_1-of-4 slds-medium-size_1-of-3"></div>
+                </header>
+            </div>
+        </article>
         <div>
             <lightning-datatable
                     key-field="Id"
-                    data={data}
-                    show-row-number-column
+                    data={visibleInterviews}
                     onrowaction={handleRowAction}
                     hide-checkbox-column
                     columns={columns}>
             </lightning-datatable>
         </div>
+        <div slot="footer" class="slds-var-m-horizontal-medium">
+            <c-pagination records={dataPerWeek} onupdate={updateInterviewsHandler}></c-pagination>
+        </div>
     </lightning-card>
+    <article class="slds-card">
+        <div class="slds-grid slds-einstein-header slds-card__header">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-grid slds-grid_vertical-align-center slds-size_3-of-4 slds-medium-size_2-of-3">
+                    <div class="slds-media__figure">
+          <span class="slds-icon_container slds-icon-utility-salesforce1">
+            <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+              <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#salesforce1"></use>
+            </svg>
+          </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-truncate">
+                            <span class="slds-text-heading_small">Information for Interview</span>
+                        </h2>
+                    </div>
+                </div>
+                <div class="slds-einstein-header__figure slds-size_1-of-4 slds-medium-size_1-of-3"></div>
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered slds-table_fixed-layout" role="grid" aria-label="Example table in a Card">
+                <thead>
+                <tr class="slds-line-height_reset">
+                    <th class="" scope="col">
+                        <div class="slds-truncate">All Interviews</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">% successful interviews</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">% failed interviews</div>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="slds-hint-parent">
+                    <td role="gridcell">
+                        <div class="slds-truncate">{dataCount}</div>
+                    </td>
+                    <td role="gridcell">
+                        <div class="slds-truncate">{percentOffer}%</div>
+                    </td>
+                    <td role="gridcell">
+                        <div class="slds-truncate">{percentReject}%</div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
 </template>
 
