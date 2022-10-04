@@ -10,10 +10,9 @@ const actions = [
 const columns = [
     { label: 'Name Interview', fieldName: 'Name' },
     { label: 'Status Interview', fieldName: 'Stage__c' },
-    { label: 'Status Interviewkfrlfjrl', fieldName: 'Scheduled_interview_date__c' },
     {
         type: 'action',
-        typeAttributes: {rowActions: actions, menuAlignment: 'left'},
+        typeAttributes: {rowActions: actions, menuAlignment: 'left' },
     },
 ];
 export default class InterviewTable extends LightningElement {
@@ -21,8 +20,6 @@ export default class InterviewTable extends LightningElement {
     dataCount = [];
     dataAll = [];
     dataPerWeek = [];
-    dataOffer;
-    dataReject;
     columns = columns;
     error;
     visibleInterviews;
@@ -36,21 +33,21 @@ export default class InterviewTable extends LightningElement {
     }
 
     connectedCallback() {
-        getInterviewsPerWeek({CandidateId: this.recordId})
+        getInterviewsPerWeek({candidateId: this.recordId})
             .then(result => {
                 this.dataPerWeek = result;
             })
             .catch(error => {
                 this.error = error;
             })
-        getInterviewsCount({CandidateId: this.recordId})
+        getInterviewsCount({candidateId: this.recordId})
             .then(result => {
                 this.dataCount = result;
             })
             .catch(error => {
                 this.error = error;
             })
-        getAllInterviews({CandidateId: this.recordId})
+        getAllInterviews({candidateId: this.recordId})
             .then(result => {
                 this.dataAll = result;
                 this.handleInterviewStage();
@@ -60,18 +57,11 @@ export default class InterviewTable extends LightningElement {
             })
     }
 
-    //TODO: забрати консольлоги
-    //TODO: позабиртаи пробели
-    //TODO: забрати коменти
-    //TODO: offeracept видалити нахер
-    handleInterviewStage(){
-        console.log(this.dataAll);
-        for(let item of this.dataAll){
-            console.log(item.Stage__c);
-            if(item.Stage__c === 'Offer Sent' || item.Stage__c === 'Offer Signed' || item.Stage__c === 'Refused'){
-                console.log(item.Stage__c);
+    handleInterviewStage() {
+        for(let item of this.dataAll) {
+            if (item.Stage__c === 'Offer Sent' || item.Stage__c === 'Offer Signed' || item.Stage__c === 'Refused') {
                 this.count++;
-            }else if(item.Stage__c === 'Rejected by interviewer'){
+            } else if (item.Stage__c === 'Rejected by interviewer') {
                 this.rejectedCount++;
             }
         }
@@ -79,7 +69,7 @@ export default class InterviewTable extends LightningElement {
         this.percentReject = this.rejectedCount/this.dataCount * 100;
     }
 
-    handleRowAction(event){
+    handleRowAction(event) {
         const row = event.detail.row.Id;
          window.open('/'+row);
 
