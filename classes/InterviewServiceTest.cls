@@ -1,45 +1,46 @@
 @IsTest
 public class InterviewServiceTest {
-	@IsTest
+
+    @IsTest
     static void testInterview() {
-        Contact objContact = new Contact(LastName='Tolik',RecordTypeId='0127R000000WGwnQAG');
-        insert objContact;
-
-        Interview__c objInterview = new Interview__c(Name='devops interview',Interviewer__c=objContact.Id,Stage__c='Arranged');
-        Interview__c objInterview1 = new Interview__c(Name='devops interview1',Interviewer__c=objContact.Id,Stage__c='Arranged');
-        Interview__c objInterview2 = new Interview__c(Name='devops interview2',Interviewer__c=objContact.Id,Stage__c='Arranged');
-
+        List<Interview__c> interviews = TestDataFactory.createInterviewWithInterviewer(3);
         Test.startTest();
-        insert objInterview;
-        insert objInterview1;
-        insert objInterview2;
+        insert interviews;
+        for(Integer i=0; i<interviews.size(); i++) {
+            interviews[i].Scheduled_interview_date__c = System.today() + 1;
+        }
+        update interviews;
         Test.stopTest();
-        List<Interview__c> interviews = [SELECT Interviewer__c FROM Interview__c];
-        System.equals(3, interviews.size());
+        System.equals('Scheduled', interviews[0].Stage__c);
     }
+
     @IsTest
     static void testInterviewError() {
-        Contact objContact = new Contact(LastName='Tolik',RecordTypeId='0127R000000WGwnQAG');
-        insert objContact;
-
-        Interview__c objInterview = new Interview__c(Name='devops interview',Interviewer__c=objContact.Id,Stage__c='Arranged');
-        Interview__c objInterview1 = new Interview__c(Name='devops interview1',Interviewer__c=objContact.Id,Stage__c='Arranged');
-        Interview__c objInterview2 = new Interview__c(Name='devops interview2',Interviewer__c=objContact.Id,Stage__c='Arranged');
-    	Interview__c objInterview3 = new Interview__c(Name='devops interview3',Interviewer__c=objContact.Id);
-
+        List<Interview__c> interviews = TestDataFactory.createInterviewWithInterviewer(10);
+        System.debug(interviews.size());
         Test.startTest();
         try {
-          	insert objInterview;
-        	insert objInterview1;
-        	insert objInterview2;
-        	insert objInterview3;
-        }
-        catch (DmlException ex) {
-      		System.assertEquals(StatusCode.FIELD_CUSTOM_VALIDATION_EXCEPTION, ex.getDmlType(0));
-      		System.assertEquals('You already have 3 interviews per week for this interviewer. Please choose another interviewer', ex.getDmlMessage(0));
+            for (Integer i = 0; i < interviews.size(); i++) {
+                interviews[i].Scheduled_interview_date__c = System.today() + 1;
+            }
+            update interviews;
+        } catch (Exception ex) {
+            Boolean expectedExceptionThrown =  ex.getMessage().contains('You already have 3 interviews per week for this interviewer. Please choose another interviewer');
+            System.assertEquals(expectedExceptionThrown, false);
         }
         Test.stopTest();
     }
 
-
+    @IsTest
+    static void testBulkInterview() {
+        List<Interview__c> interviews = TestDataFactory.createInterviewWithInterviewer(20, 30);
+        Test.startTest();
+        insert interviews;
+        for (Integer i = 0; i < interviews.size(); i++) {
+            interviews[i].Scheduled_interview_date__c = System.today() + 1;
+        }
+        update interviews;
+        Test.stopTest();
+        System.equals(20, interviews.size());
+    }
 }
