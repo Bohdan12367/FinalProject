@@ -3,44 +3,41 @@ public class InterviewServiceTest {
 
     @IsTest
     static void testInterview() {
-        List<Interview__c> interviews = TestDataFactory.createInterviewWithInterviewer(3);
+        Contact c = TestDataFactory.createContact('Ivan');
+        TestDataFactory.createInterviewsList(1,c.Id,true);
+        Interview__c interview = TestDataFactory.createInterview(c.Id);
+        interview.Scheduled_interview_date__c = Date.today();
         Test.startTest();
-        insert interviews;
-        for(Integer i=0; i<interviews.size(); i++) {
-            interviews[i].Scheduled_interview_date__c = System.today() + 1;
-        }
-        update interviews;
+        update interview;
         Test.stopTest();
-        System.equals('Scheduled', interviews[0].Stage__c);
+        System.equals('Scheduled', interview.Stage__c);
     }
 
     @IsTest
     static void testInterviewError() {
-        List<Interview__c> interviews = TestDataFactory.createInterviewWithInterviewer(10);
-        System.debug(interviews.size());
+        Contact c = TestDataFactory.createContact('Ivan');
+        TestDataFactory.createInterviewsList(3,c.Id,true);
+        Interview__c interview = TestDataFactory.createInterview(c.Id);
+        interview.Scheduled_interview_date__c = Date.today();
         Test.startTest();
         try {
-            for (Integer i = 0; i < interviews.size(); i++) {
-                interviews[i].Scheduled_interview_date__c = System.today() + 1;
-            }
-            update interviews;
+            update interview;
         } catch (Exception ex) {
-            Boolean expectedExceptionThrown =  ex.getMessage().contains('You already have 3 interviews per week for this interviewer. Please choose another interviewer');
-            System.assertEquals(expectedExceptionThrown, false);
+            Boolean expectedExceptionThrown =  ex.getMessage().contains('You already have 3 interviews per week. Please choose another date');
+            System.assertEquals(expectedExceptionThrown, true);
         }
-        Test.stopTest();
     }
 
     @IsTest
     static void testBulkInterview() {
-        List<Interview__c> interviews = TestDataFactory.createInterviewWithInterviewer(20, 30);
+        Contact c = TestDataFactory.createContact('Ivan');
+        List<Interview__c> interviews = TestDataFactory.createInterviewsList(200, c.Id,false);
         Test.startTest();
-        insert interviews;
         for (Integer i = 0; i < interviews.size(); i++) {
-            interviews[i].Scheduled_interview_date__c = System.today() + 1;
+            interviews[i].Scheduled_interview_date__c = System.today() + 7;
         }
         update interviews;
         Test.stopTest();
-        System.equals(20, interviews.size());
+        System.equals(200, [SELECT COUNT(Id) FROM Interview__c WHERE Interviewer__c =:c.Id]);
     }
 }
