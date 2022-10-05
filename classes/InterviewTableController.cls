@@ -27,7 +27,7 @@ public with sharing class InterviewTableController {
         }
         query += 'FROM Interview__c WHERE Candidate__c =: candidateId ';
         if (additionCondition) {
-            query += 'AND Scheduled_interview_date__c = NEXT_N_DAYS:7 ';
+            query += 'AND Scheduled_interview_date__c = THIS_WEEK ';
         }
         return query;
     }

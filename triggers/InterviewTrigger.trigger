@@ -1,3 +1,3 @@
-trigger InterviewTrigger on Interview__c (before insert) {
-	InterviewTriggerHandler.handler(Trigger.New,Trigger.operationType);
+trigger InterviewTrigger on Interview__c (before insert, before update) {
+	InterviewTriggerHandler.handler(Trigger.new,Trigger.operationType);
 }

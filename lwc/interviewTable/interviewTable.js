@@ -58,15 +58,15 @@ export default class InterviewTable extends LightningElement {
     }
 
     handleInterviewStage() {
-        for(let item of this.dataAll) {
+        for (let item of this.dataAll) {
             if (item.Stage__c === 'Offer Sent' || item.Stage__c === 'Offer Signed' || item.Stage__c === 'Refused') {
                 this.count++;
             } else if (item.Stage__c === 'Rejected by interviewer') {
                 this.rejectedCount++;
             }
         }
-        this.percentOffer = this.count/this.dataCount * 100;
-        this.percentReject = this.rejectedCount/this.dataCount * 100;
+        this.percentOffer = Math.round(this.count/this.dataCount * 100);
+        this.percentReject = Math.round(this.rejectedCount/this.dataCount * 100);
     }
 
     handleRowAction(event) {
